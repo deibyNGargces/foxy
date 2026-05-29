@@ -1,0 +1,780 @@
+/* AESTHETIC RETRO-CYBERPUNK STYLING FOR FOXY VS ZOMBIES */
+
+:root {
+  --color-bg: #09080f;
+  --color-panel: rgba(15, 12, 28, 0.85);
+  --color-panel-border: rgba(255, 255, 255, 0.07);
+  --color-orange: #ff6b35;
+  --color-blue: #3ae3ff;
+  --color-red: #dc2626;
+  --color-green: #87f542;
+  --color-gold: #ffd700;
+  
+  --font-retro: 'Press Start 2P', monospace;
+  --font-hud: 'Rajdhani', sans-serif;
+}
+
+/* ================= REGLAS DE RESETEO Y CORE ================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: #f3f4f6;
+  font-family: var(--font-hud);
+  font-weight: 500;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Fondo estrellado animado detrás */
+  background-image: radial-gradient(circle at 50% 50%, #151126 0%, #09080f 100%);
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contenedor del Gabinete de Arcade */
+#arcade-wrapper {
+  background-color: #171520;
+  padding: 14px;
+  border-radius: 16px;
+  border: 4px solid #2b2836;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(255, 107, 53, 0.15); /* Brillo naranja */
+  position: relative;
+}
+
+/* ================= CONTENEDOR DEL JUEGO (CANVAS + OVERLAYS) ================= */
+#game-container {
+  width: 960px;  /* Ancho de aspecto lúdico (original 640x360 escalado x1.5) */
+  height: 540px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #06050b;
+  border: 3px solid #14121b;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+}
+
+/* Renderizado Pixelado Nítido para el Canvas */
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Estilos de las Capas Superpuestas (Overlays) */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease;
+}
+
+.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Contenido de Menús (Diseño Glassmorphism Premium) */
+.menu-content {
+  width: 90%;
+  max-width: 840px;
+  background: var(--color-panel);
+  border: 1px solid var(--color-panel-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.6),
+    inset 0 0 15px rgba(255, 255, 255, 0.03);
+}
+
+/* ================= DISEÑO DE TEXTO NEÓN RETRO ================= */
+.title-logo-container {
+  margin-bottom: 8px;
+}
+
+.game-title {
+  font-family: var(--font-retro);
+  font-size: 40px;
+  line-height: 1.2;
+  margin-bottom: -4px;
+}
+
+.game-subtitle {
+  font-family: var(--font-retro);
+  font-size: 30px;
+}
+
+/* Efectos de Iluminación Neón */
+.neon-orange {
+  color: #fff;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px var(--color-orange),
+    0 0 20px var(--color-orange),
+    0 0 40px var(--color-orange);
+}
+
+.neon-blue {
+  color: #fff;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px var(--color-blue),
+    0 0 20px var(--color-blue),
+    0 0 40px var(--color-blue);
+}
+
+.neon-red {
+  color: #fff;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px var(--color-red),
+    0 0 20px var(--color-red),
+    0 0 35px var(--color-red);
+}
+
+.game-description {
+  font-family: var(--font-retro);
+  font-size: 10px;
+  color: #8b85a3;
+  letter-spacing: 1.5px;
+  margin-top: 10px;
+  margin-bottom: 24px;
+}
+
+/* ================= BOTONES CON EFECTO DE GLOW ================= */
+.btn {
+  font-family: var(--font-retro);
+  font-size: 11px;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+
+.btn-green {
+  background-color: #10b981;
+  border-bottom: 4px solid #047857;
+}
+
+.btn-green:hover {
+  background-color: #34d399;
+  transform: translateY(-2px);
+}
+
+.btn-red {
+  background-color: var(--color-red);
+  border-bottom: 4px solid #991b1b;
+}
+
+.btn-red:hover {
+  background-color: #ef4444;
+  transform: translateY(-2px);
+}
+
+.btn-orange {
+  background-color: var(--color-orange);
+  border-bottom: 4px solid #b45309;
+}
+
+.btn-orange:hover {
+  background-color: #ff8a5c;
+  transform: translateY(-2px);
+}
+
+.btn-dark {
+  background-color: #272335;
+  border-bottom: 4px solid #14121d;
+  font-size: 8px;
+}
+
+.btn-dark:hover {
+  background-color: #3d3752;
+}
+
+.btn-dark.active {
+  border-color: var(--color-blue);
+  box-shadow: 0 0 10px rgba(58, 227, 255, 0.4);
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.options-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.options-row button {
+  flex: 1;
+}
+
+/* Efecto glow animado */
+.glow-effect:hover {
+  box-shadow: 
+    0 0 15px rgba(16, 185, 129, 0.6),
+    0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+.btn-red.glow-effect:hover {
+  box-shadow: 
+    0 0 15px rgba(220, 38, 38, 0.6),
+    0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* ================= PANEL DE INSTRUCCIONES ================= */
+.instructions-panel {
+  margin-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+  width: 100%;
+  max-width: 580px;
+}
+
+.instructions-panel h3 {
+  font-family: var(--font-retro);
+  font-size: 9px;
+  color: var(--color-blue);
+  margin-bottom: 12px;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  text-align: left;
+  font-size: 13px;
+  color: #b3b0c2;
+}
+
+.controls-grid span {
+  font-family: var(--font-retro);
+  font-size: 8px;
+  color: #fff;
+  background-color: #2c293a;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border-bottom: 2px solid #14121d;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.credits {
+  margin-top: 16px;
+  font-family: var(--font-retro);
+  font-size: 6px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ================= HUD EN JUEGO (TOP BAR) ================= */
+#hud {
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none; /* No entorpecer clicks */
+}
+
+.hud-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.hud-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.hud-center {
+  align-items: center;
+  gap: 4px;
+}
+
+.hud-right {
+  align-items: flex-end;
+}
+
+/* Barra de Vida */
+.hud-health-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-label {
+  font-family: var(--font-retro);
+  font-size: 9px;
+  color: var(--color-orange);
+}
+
+.health-bar-bg {
+  width: 120px;
+  height: 10px;
+  background-color: #171520;
+  border: 1px solid #332f44;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.health-bar-fill {
+  height: 100%;
+  background-color: #10b981; /* Verde vida */
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+  transition: width 0.15s ease-out;
+}
+
+/* Parpadeo de baja vida */
+@keyframes low-hp-flash {
+  0%, 100% { border-color: #332f44; box-shadow: none; }
+  50% { border-color: var(--color-red); box-shadow: 0 0 10px rgba(220, 38, 38, 0.7); }
+}
+.low-health-warning {
+  animation: low-hp-flash 0.6s infinite;
+}
+.low-health-warning .health-bar-fill {
+  background-color: var(--color-red) !important;
+}
+
+.hud-value {
+  font-family: var(--font-retro);
+  font-size: 8px;
+}
+
+.gold-text {
+  color: var(--color-gold);
+}
+
+.dark-red-text {
+  color: #ff3333;
+}
+
+.cyan-text {
+  color: var(--color-blue);
+}
+
+.wave-badge {
+  background-color: rgba(255, 107, 53, 0.15);
+  border: 1px solid var(--color-orange);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--color-orange);
+}
+
+/* Record e indicador de Combo */
+.hud-bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.hud-record {
+  font-family: var(--font-retro);
+  font-size: 7px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.hud-combo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(58, 227, 255, 0.1);
+  border: 1px solid var(--color-blue);
+  padding: 3px 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(58, 227, 255, 0.2);
+}
+
+.combo-text {
+  font-family: var(--font-retro);
+  font-size: 7px;
+  color: var(--color-blue);
+}
+
+.combo-bar-bg {
+  width: 40px;
+  height: 4px;
+  background-color: #171520;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.combo-bar-fill {
+  height: 100%;
+  background-color: var(--color-blue);
+}
+
+/* ================= TIENDA DE MEJORAS (SHOP GRID) ================= */
+.shop-content {
+  max-width: 880px;
+}
+
+.shop-subtitle {
+  font-size: 14px;
+  color: #a4a0ba;
+  margin-top: -6px;
+}
+
+.shop-balance {
+  font-family: var(--font-retro);
+  font-size: 12px;
+  margin: 14px 0;
+  padding: 6px 14px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--color-gold);
+  border-radius: 6px;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.shop-card {
+  background: rgba(24, 20, 42, 0.6);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.shop-card:hover {
+  background: rgba(33, 27, 56, 0.85);
+  border-color: rgba(255, 107, 53, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Carta triple especial que ocupa abajo todo */
+.triple-card {
+  grid-column: span 4;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: rgba(58, 227, 255, 0.03);
+  border-color: rgba(58, 227, 255, 0.1);
+}
+
+.triple-card h4 {
+  color: var(--color-blue) !important;
+}
+
+.card-icon {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.triple-card .card-icon {
+  margin-bottom: 0;
+  font-size: 24px;
+}
+
+.shop-card h4 {
+  font-family: var(--font-retro);
+  font-size: 8px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.shop-card p {
+  font-size: 11px;
+  color: #a4a0ba;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.triple-card p {
+  margin-bottom: 0;
+  max-width: 320px;
+  text-align: left;
+}
+
+/* Indicadores de Nivel en la Tienda */
+.level-bar {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 10px;
+  width: 80%;
+  height: 5px;
+}
+
+.triple-card .level-bar {
+  margin-bottom: 0;
+  width: 40px;
+}
+
+.level-segment {
+  flex: 1;
+  background-color: #272335;
+  border-radius: 1px;
+}
+
+.level-segment.active {
+  background-color: var(--color-orange);
+  box-shadow: 0 0 6px var(--color-orange);
+}
+
+.triple-card .level-segment.active {
+  background-color: var(--color-blue);
+  box-shadow: 0 0 6px var(--color-blue);
+}
+
+/* Botón comprar */
+.btn-buy {
+  font-size: 7px;
+  padding: 8px 12px;
+  background-color: #272335;
+  border-bottom: 3px solid #14121d;
+  width: 100%;
+}
+
+.btn-buy:hover:not(:disabled) {
+  background-color: #4ade80;
+  color: #000;
+  border-bottom-color: #166534;
+}
+
+.btn-buy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-buy.maxed {
+  background-color: #171520 !important;
+  color: rgba(255,255,255,0.3) !important;
+  border-color: #0f0d14 !important;
+  cursor: default;
+}
+
+.shop-footer {
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* ================= GAME OVER SCREEN & PAUSE ================= */
+.game-over-title {
+  font-family: var(--font-retro);
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+
+.game-over-subtitle {
+  color: #a4a0ba;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.game-over-stats {
+  width: 100%;
+  max-width: 420px;
+  background-color: #0f0d16;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.03);
+  margin-bottom: 28px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-retro);
+  font-size: 9px;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.06);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.record-row {
+  border-top: 1.5px solid rgba(255,255,255,0.1);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+/* Pausa */
+.pause-content h2 {
+  font-family: var(--font-retro);
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.key-badge {
+  font-family: var(--font-retro);
+  font-size: 7px;
+  color: #fff;
+  background-color: #272335;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border-bottom: 2px solid #0f0d14;
+}
+
+/* ================= FILTRO CRT RETRO EXQUISITO (SCANLINES) ================= */
+
+/* Líneas de escaneo estáticas */
+#game-container.crt-active::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+  z-index: 99;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Sombreado de rejilla de fósforo CRT y distorsión radial */
+#game-container.crt-active::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.5) 100%);
+  z-index: 100;
+  pointer-events: none;
+  border: 4px solid black; /* Simula bisel de tubo de pantalla */
+}
+
+/* Animación sutil de flickering / líneas recorriendo (Roll scanlines) */
+@keyframes crt-flicker {
+  0% { opacity: 0.985; }
+  50% { opacity: 1.0; }
+  100% { opacity: 0.985; }
+}
+
+@keyframes scanline-roll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+#game-container.crt-active {
+  animation: crt-flicker 0.15s infinite;
+}
+
+/* ================= ALERTA DE JEFE DE OLEADA (BOSS ALERT RED LIGHT) ================= */
+
+#boss-warning-overlay {
+  background: rgba(15, 3, 3, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 50; /* Por debajo del HUD pero por encima del gameplay */
+}
+
+.boss-warning-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: pulse-border 1.0s infinite alternate;
+}
+
+.siren-beacon {
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-red);
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--color-red);
+  animation: pulse-siren 0.6s infinite;
+}
+
+.boss-warning-title {
+  font-family: var(--font-retro);
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+.neon-red-flash {
+  animation: neon-red-flash-anim 0.4s infinite;
+}
+
+.boss-warning-subtitle {
+  font-size: 13px;
+  color: #fca5a5;
+  letter-spacing: 1px;
+}
+
+/* --- ANIMACIONES DE ALERTA --- */
+
+@keyframes pulse-siren {
+  0% {
+    box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 25px rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes neon-red-flash-anim {
+  0%, 100% {
+    color: #fff;
+    text-shadow: 
+      0 0 5px #fff,
+      0 0 10px var(--color-red),
+      0 0 25px var(--color-red);
+  }
+  50% {
+    color: #7f1d1d;
+    text-shadow: none;
+  }
+}
+
+@keyframes pulse-border {
+  0% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1.02);
+  }
+}

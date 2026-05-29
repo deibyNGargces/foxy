@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foxy vs Zombies - Retro Ninja Platformer</title>
+  <meta name="description" content="Juego web retro pixel-art 8-bit de plataformas y supervivencia. Controla al Zorro Ninja místico usando WASD y elimina oleadas de zombies.">
+  
+  <!-- Google Fonts para estilo Retro Arcade -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Favicon de Zorro Pixel Art -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
+  
+  <!-- Enlace a estilos CSS -->
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Contenedor Principal del Arcade/Gabinete -->
+    <div id="arcade-wrapper">
+      
+      <!-- Contenedor del Juego y Efecto de Pantalla CRT -->
+      <div id="game-container" class="crt-active">
+        
+        <!-- Canvas para el juego retro (640x360 escalado con CSS) -->
+        <canvas id="game-canvas"></canvas>
+        
+        <!-- ================= HUD SUPERIOR (JUGANDO) ================= -->
+        <div id="hud" class="overlay hidden">
+          <div class="hud-top-bar">
+            <!-- Izquierda: Vida del Zorro -->
+            <div class="hud-group">
+              <div class="hud-health-container">
+                <span class="hud-label">LIFE</span>
+                <div class="health-bar-bg">
+                  <div id="hud-health" class="health-bar-fill" style="width: 100%;"></div>
+                </div>
+                <span id="hud-health-text" class="hud-value">100/100</span>
+              </div>
+            </div>
+            
+            <!-- Centro: Dinero (Bellotas) e Info Oleada -->
+            <div class="hud-group hud-center">
+              <div id="hud-money" class="hud-value gold-text">🌰 0</div>
+              <div id="hud-wave" class="hud-value wave-badge">OLEADA: 1</div>
+            </div>
+
+            <!-- Derecha: Score y Zombie Left Count -->
+            <div class="hud-group hud-right">
+              <div id="hud-score" class="hud-value">SCORE: 000000</div>
+              <div id="hud-zombies" class="hud-value dark-red-text">ZOMBIES: 0</div>
+            </div>
+          </div>
+          
+          <!-- HUD Record e Indicador Combo flotante -->
+          <div class="hud-bottom-bar">
+            <span id="hud-highscore" class="hud-record">RECORD: 0</span>
+            
+            <!-- Combo Badge -->
+            <div id="hud-combo-container" class="hud-combo hidden">
+              <span id="hud-combo-badge" class="combo-text">x2 COMBO!</span>
+              <div class="combo-bar-bg">
+                <div id="hud-combo-bar" class="combo-bar-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ALERTA DE JEFE DE OLEADA (BOSS ALERT) ================= -->
+        <div id="boss-warning-overlay" class="overlay hidden">
+          <div class="boss-warning-content">
+            <div class="siren-beacon"></div>
+            <h1 class="boss-warning-title neon-red-flash">⚠️ ¡ALERTA DE JEFE! ⚠️</h1>
+            <p class="boss-warning-subtitle">EL GOBLIN COLOSAL SE APROXIMA A LA ARENA</p>
+          </div>
+        </div>
+
+        <!-- ================= PANTALLA DE INICIO (START SCREEN) ================= -->
+        <div id="start-screen" class="overlay">
+          <div class="menu-content">
+            <div class="title-logo-container">
+              <h1 class="game-title neon-orange">FOXY</h1>
+              <h2 class="game-subtitle neon-blue">VS ZOMBIES</h2>
+            </div>
+            
+            <p class="game-description">SUPERVIVENCIA RETRO NINJA PIXEL-ART</p>
+
+            <div class="menu-buttons">
+              <button id="btn-resume-game" class="btn btn-orange glow-effect hidden">CONTINUAR PARTIDA</button>
+              <button id="btn-play" class="btn btn-green glow-effect">NUEVA PARTIDA</button>
+              <div class="options-row">
+                <button id="btn-crt-toggle" class="btn btn-dark active">📺 CRT FILTER</button>
+                <button id="btn-mute" class="btn btn-dark">🔊 SONIDO: ON</button>
+              </div>
+            </div>
+
+            <!-- Instrucciones de Juego -->
+            <div class="instructions-panel">
+              <h3>CONTROLES DE COMBATE NINJA</h3>
+              <div class="controls-grid">
+                <div><span>A / D</span>: Moverse</div>
+                <div><span>W / ESPACIO</span>: Saltar / Doble Salto</div>
+                <div><span>S</span>: Agacharse / Deslizarse</div>
+                <div><span>SHIFT (Mayús)</span>: Correr (Sprint)</div>
+                <div><span>CLICK / J</span>: Lanzar Hechizo Fuego Azul</div>
+                <div><span>W en Pared</span>: Wall Jump (Rebotar)</div>
+              </div>
+            </div>
+            
+            <div class="credits">Created by Antigravity DeepMind</div>
+          </div>
+        </div>
+
+        <!-- ================= TIENDA DE MEJORAS (UPGRADE SHOP) ================= -->
+        <div id="shop-screen" class="overlay hidden">
+          <div class="menu-content shop-content">
+            <h2 class="menu-title neon-orange">TIENDA NINJA</h2>
+            <p class="shop-subtitle">Gasta tus bellotas doradas para entrenar tus habilidades</p>
+            
+            <div class="shop-balance">
+              Saldo Disponible: <span id="shop-money" class="gold-text">🌰 0</span>
+            </div>
+
+            <!-- Rejilla de Mejoras -->
+            <div class="shop-grid">
+              <!-- Vida -->
+              <div class="shop-card">
+                <div class="card-icon">❤️</div>
+                <h4>Vida Máxima</h4>
+                <p>Aumenta +25 de salud máxima y cura por completo.</p>
+                <div id="bar-health" class="level-bar"></div>
+                <button id="buy-health" class="btn btn-buy">Comprar: 🌰50</button>
+              </div>
+
+              <!-- Daño -->
+              <div class="shop-card">
+                <div class="card-icon">🔥</div>
+                <h4>Fuerza Mística</h4>
+                <p>Aumenta +5 de daño a tus bolas de fuego espirituales.</p>
+                <div id="bar-damage" class="level-bar"></div>
+                <button id="buy-damage" class="btn btn-buy">Comprar: 🌰60</button>
+              </div>
+
+              <!-- Velocidad -->
+              <div class="shop-card">
+                <div class="card-icon">⚡</div>
+                <h4>Velocidad Ninja</h4>
+                <p>Aumenta +15% velocidad de movimiento y carrera.</p>
+                <div id="bar-speed" class="level-bar"></div>
+                <button id="buy-speed" class="btn btn-buy">Comprar: 🌰40</button>
+              </div>
+
+              <!-- Cadencia de fuego -->
+              <div class="shop-card">
+                <div class="card-icon">🌀</div>
+                <h4>Cadencia Fuego</h4>
+                <p>Reduce +20% la recarga entre lanzamientos de magia.</p>
+                <div id="bar-firerate" class="level-bar"></div>
+                <button id="buy-firerate" class="btn btn-buy">Comprar: 🌰70</button>
+              </div>
+
+              <!-- Disparo Triple -->
+              <div class="shop-card triple-card">
+                <div class="card-icon">🔱</div>
+                <h4>Disparo Triple</h4>
+                <p>¡Desbloquea disparo en abanico de 3 orbes espirituales!</p>
+                <div id="bar-tripleshot" class="level-bar"></div>
+                <button id="buy-tripleshot" class="btn btn-buy">Comprar: 🌰200</button>
+              </div>
+            </div>
+
+            <div class="shop-footer">
+              <button id="btn-next-wave" class="btn btn-green glow-effect">INICIAR SIGUIENTE OLEADA ➔</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PANTALLA FIN DE JUEGO (GAME OVER) ================= -->
+        <div id="game-over-screen" class="overlay hidden">
+          <div class="menu-content">
+            <h1 class="game-over-title neon-red">MISIÓN FALLIDA</h1>
+            <p class="game-over-subtitle">El zorro ninja ha caído luchando contra la horda...</p>
+            
+            <div class="game-over-stats">
+              <div class="stat-row">
+                <span>PUNTUACIÓN OBTENIDA:</span>
+                <span id="final-score" class="gold-text">0</span>
+              </div>
+              <div class="stat-row">
+                <span>OLEADAS SOBREVIVIDAS:</span>
+                <span id="final-wave" class="cyan-text">0</span>
+              </div>
+              <div class="stat-row">
+                <span>ZOMBIES ELIMINADOS:</span>
+                <span id="final-zombies" class="red-text">0</span>
+              </div>
+              <div class="stat-row record-row">
+                <span>RÉCORD HISTÓRICO:</span>
+                <span id="final-highscore" class="gold-text">0</span>
+              </div>
+            </div>
+
+            <div class="menu-buttons">
+              <button id="btn-continue" class="btn btn-green glow-effect hidden">CONTINUAR OLEADA</button>
+              <button id="btn-restart" class="btn btn-red glow-effect">REINTENTAR DESDE EL INICIO</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PAUSA OVERLAY ================= -->
+        <div id="pause-overlay" class="overlay hidden">
+          <div class="menu-content pause-content">
+            <h2 class="neon-blue">PAUSA</h2>
+            <p>Presiona <span class="key-badge">ESC</span> o <span class="key-badge">P</span> para continuar la batalla</p>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- Carga del JS principal modular de Vite -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
