@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#1a1330"/>
+      <stop offset="100%" stop-color="#09080f"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fondo (cuadrado completo para icono maskable) -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Zorro geométrico, dentro de la zona segura central (~80%) -->
+  <g filter="url(#glow)">
+    <!-- Orejas -->
+    <polygon points="150,128 250,168 176,250" fill="#ff6b35"/>
+    <polygon points="362,128 262,168 336,250" fill="#ff6b35"/>
+    <polygon points="172,160 232,182 192,232" fill="#1a1330"/>
+    <polygon points="340,160 280,182 320,232" fill="#1a1330"/>
+
+    <!-- Cara -->
+    <polygon points="176,200 336,200 312,322 256,388 200,322" fill="#ff6b35"/>
+
+    <!-- Mejillas / hocico blanco -->
+    <polygon points="256,388 206,300 256,318" fill="#f4efff"/>
+    <polygon points="256,388 306,300 256,318" fill="#f4efff"/>
+
+    <!-- Ojos (neón azul) -->
+    <polygon points="206,248 240,262 212,282" fill="#3ae3ff"/>
+    <polygon points="306,248 272,262 300,282" fill="#3ae3ff"/>
+
+    <!-- Nariz -->
+    <polygon points="256,360 240,338 272,338" fill="#09080f"/>
+  </g>
+</svg>

@@ -387,7 +387,38 @@ class GameEngine {
     }
   }
 
+  // Solicita pantalla completa en móvil para ocultar la barra del navegador.
+  // Debe invocarse dentro del gesto del usuario (click en botón) para que el navegador lo permita.
+  requestMobileFullscreen() {
+    if (!document.body.classList.contains('touch-device')) return;
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen
+      || el.mozRequestFullScreen || el.msRequestFullscreen;
+
+    if (req) {
+      try {
+        const result = req.call(el);
+        // Tras entrar en fullscreen, intentar bloquear orientación horizontal (best-effort)
+        const lockLandscape = () => {
+          if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(() => {});
+          }
+        };
+        if (result && typeof result.then === 'function') {
+          result.then(lockLandscape).catch(() => {});
+        } else {
+          lockLandscape();
+        }
+      } catch (e) {
+        // Algunos navegadores (Safari iPhone) no soportan Fullscreen API; se ignora.
+      }
+    }
+  }
+
   startGame() {
+    this.requestMobileFullscreen();
     this.score = 0;
     this.money = 0;
     this.zombiesSlain = 0;
@@ -458,6 +489,7 @@ class GameEngine {
   }
 
   resumeSavedGame() {
+    this.requestMobileFullscreen();
     const rawData = localStorage.getItem('foxy_save_progress');
     if (!rawData) return;
     

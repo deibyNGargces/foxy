@@ -29,6 +29,7 @@ body {
   font-weight: 500;
   overflow: hidden;
   height: 100vh;
+  height: 100dvh; /* Altura dinámica: descuenta la barra del navegador móvil */
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -802,9 +803,10 @@ body {
   }
 
   #game-container {
-    /* min() elige la dimensión limitante para mantener 16:9 (1.7778) */
-    width: min(100vw, 177.78vh);
-    height: min(56.25vw, 100vh);
+    /* min() elige la dimensión limitante para mantener 16:9 (1.7778).
+       dvh = altura dinámica del viewport (descuenta la barra del navegador). */
+    width: min(100vw, 177.78dvh);
+    height: min(56.25vw, 100dvh);
     border-radius: 0;
     border: none;
   }

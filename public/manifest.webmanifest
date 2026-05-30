@@ -1,0 +1,29 @@
+{
+  "name": "Foxy vs Zombies",
+  "short_name": "Foxy",
+  "description": "Juego retro pixel-art 8-bit de plataformas y supervivencia ninja por oleadas. Controla al Zorro Ninja y elimina hordas de zombies a través de 7 mundos.",
+  "lang": "es",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#09080f",
+  "theme_color": "#09080f",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
