@@ -1025,11 +1025,11 @@ body.touch-device #touch-controls:not(.hidden) {
 .action-btn.pressed { transform: scale(0.9); }
 
 /* Posición en el diamante + identidad de color por acción */
-.act-crouch { grid-area: top;    border-color: rgba(58, 227, 255, 0.6); }
-.act-run    { grid-area: left;   border-color: rgba(255, 215, 0, 0.55); }
-.act-jump   { grid-area: right;  border-color: rgba(135, 245, 66, 0.6); }
+.act-crouch { grid-area: top;    border-color: rgba(58, 227, 255, 0.6); }  /* Bajar: arriba */
+.act-jump   { grid-area: bottom; border-color: rgba(135, 245, 66, 0.6); }  /* Saltar: abajo */
+.act-run    { grid-area: right;  border-color: rgba(255, 215, 0, 0.55); }  /* Correr: derecha */
 .act-shoot  {
-  grid-area: bottom;
+  grid-area: left;  /* Disparar: izquierda */
   border-color: rgba(255, 107, 53, 0.7);
   width: clamp(42px, 9vw, 58px);
   height: clamp(42px, 9vw, 58px);
