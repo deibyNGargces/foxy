@@ -229,20 +229,23 @@
           </div>
         </div>
 
-        <!-- ================= CONTROLES TÁCTILES (MÓVIL) ================= -->
+        <!-- ================= CONTROLES TÁCTILES (MÓVIL - ESTILO SNES) ================= -->
         <div id="touch-controls" class="hidden">
-          <!-- Cluster izquierdo: Movimiento direccional -->
-          <div class="touch-cluster touch-left-cluster">
-            <button id="touch-left" class="touch-btn touch-dir" aria-label="Mover a la izquierda">◀</button>
-            <button id="touch-right" class="touch-btn touch-dir" aria-label="Mover a la derecha">▶</button>
+          <!-- Cruceta direccional (izquierda) -->
+          <div class="touch-dpad">
+            <span class="dpad-arm dpad-up"></span>
+            <button id="touch-left" class="dpad-btn dpad-left" aria-label="Mover a la izquierda">◀</button>
+            <span class="dpad-hub"></span>
+            <button id="touch-right" class="dpad-btn dpad-right" aria-label="Mover a la derecha">▶</button>
+            <span class="dpad-arm dpad-down"></span>
           </div>
 
-          <!-- Cluster derecho: Acciones -->
-          <div class="touch-cluster touch-right-cluster">
-            <button id="touch-run" class="touch-btn touch-small touch-run" aria-label="Correr (sprint)">»</button>
-            <button id="touch-crouch" class="touch-btn touch-crouch" aria-label="Agacharse / Deslizar">▼</button>
-            <button id="touch-shoot" class="touch-btn touch-shoot" aria-label="Lanzar hechizo">🔥</button>
-            <button id="touch-jump" class="touch-btn touch-jump" aria-label="Saltar / Doble salto">▲</button>
+          <!-- Botones de acción en diamante (derecha) -->
+          <div class="touch-actions">
+            <button id="touch-crouch" class="action-btn act-crouch" aria-label="Agacharse / Deslizar">▼</button>
+            <button id="touch-run" class="action-btn act-run" aria-label="Correr (sprint)">»</button>
+            <button id="touch-jump" class="action-btn act-jump" aria-label="Saltar / Doble salto">▲</button>
+            <button id="touch-shoot" class="action-btn act-shoot" aria-label="Lanzar hechizo">🔥</button>
           </div>
         </div>
 

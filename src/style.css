@@ -925,107 +925,150 @@ body.touch-device #touch-controls:not(.hidden) {
   position: absolute;
   inset: 0;
   z-index: 60; /* Sobre el HUD (10) y la alerta de jefe (50) */
-  pointer-events: none; /* Solo los clusters/botones capturan toques */
+  pointer-events: none; /* Solo la cruceta/botones capturan toques */
 }
 
-.touch-cluster {
+/* Contenedores del gamepad: cruceta (izq) y diamante de acciones (der) */
+.touch-dpad,
+.touch-actions {
   position: absolute;
   bottom: 5%;
-  display: flex;
-  align-items: flex-end;
-  gap: clamp(10px, 2.5vw, 22px);
+  display: grid;
   pointer-events: auto;
+  place-items: center;
+}
+.touch-dpad { left: 3%; }
+.touch-actions { right: 3%; }
+
+/* ---------- CRUCETA DIRECCIONAL (estilo D-pad SNES) ---------- */
+.touch-dpad {
+  gap: 0;
+  grid-template-areas:
+    ".    up   ."
+    "left hub  right"
+    ".    down .";
 }
 
-.touch-left-cluster {
-  left: 3%;
+/* Piezas de la cruz (semitransparentes, unificadas en color) */
+.dpad-arm,
+.dpad-hub,
+.dpad-btn {
+  width: clamp(30px, 7vw, 44px);
+  height: clamp(30px, 7vw, 44px);
+  background: rgba(16, 14, 26, 0.42);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
-.touch-right-cluster {
-  right: 3%;
-}
+.dpad-up   { grid-area: up;   border-radius: 9px 9px 0 0; }
+.dpad-down { grid-area: down; border-radius: 0 0 9px 9px; }
+.dpad-hub  { grid-area: hub; }
+.dpad-arm, .dpad-hub { pointer-events: none; } /* inertes: solo forman la cruz */
 
-.touch-btn {
+.dpad-btn {
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(52px, 11vw, 76px);
-  height: clamp(52px, 11vw, 76px);
+  border: none;
+  color: rgba(207, 233, 255, 0.9);
+  font-size: clamp(14px, 3.6vw, 20px);
+  line-height: 1;
+  transition: background 0.1s ease;
+}
+.dpad-left  { grid-area: left;  border-radius: 9px 0 0 9px; }
+.dpad-right { grid-area: right; border-radius: 0 9px 9px 0; }
+.dpad-btn.pressed {
+  background: rgba(58, 227, 255, 0.5);
+  color: #fff;
+}
+
+/* Sombra/relieve sutil para que la cruz lea como un D-pad físico */
+.touch-dpad {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+  opacity: 0.78;
+}
+
+/* ---------- BOTONES DE ACCIÓN (diamante estilo SNES A/B/X/Y) ---------- */
+.touch-actions {
+  gap: clamp(5px, 1.4vw, 10px);
+  opacity: 0.82;
+  grid-template-areas:
+    ".    top    ."
+    "left .      right"
+    ".    bottom .";
+}
+
+.action-btn {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(36px, 8vw, 50px);
+  height: clamp(36px, 8vw, 50px);
   border-radius: 50%;
-  background: rgba(20, 18, 32, 0.5);
-  border: 2px solid rgba(58, 227, 255, 0.55);
-  color: #f3f4f6;
+  background: rgba(16, 14, 26, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
   font-family: var(--font-hud);
   font-weight: 700;
-  font-size: clamp(20px, 5vw, 30px);
+  font-size: clamp(15px, 3.8vw, 22px);
   line-height: 1;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  box-shadow: 0 0 12px rgba(58, 227, 255, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   transition: transform 0.06s ease, background 0.1s ease;
 }
+.action-btn.pressed { transform: scale(0.9); }
 
-.touch-btn.pressed {
-  transform: scale(0.9);
-  background: rgba(58, 227, 255, 0.4);
-}
-
-/* Botones de acción destacados */
-.touch-shoot {
-  width: clamp(64px, 14vw, 92px);
-  height: clamp(64px, 14vw, 92px);
-  border-color: rgba(255, 107, 53, 0.75);
-  box-shadow: 0 0 16px rgba(255, 107, 53, 0.3);
-  font-size: clamp(26px, 7vw, 40px);
-}
-.touch-shoot.pressed {
-  background: rgba(255, 107, 53, 0.4);
-}
-
-.touch-jump {
-  width: clamp(58px, 12vw, 84px);
-  height: clamp(58px, 12vw, 84px);
-  border-color: rgba(135, 245, 66, 0.75);
-  box-shadow: 0 0 14px rgba(135, 245, 66, 0.25);
-}
-.touch-jump.pressed {
-  background: rgba(135, 245, 66, 0.4);
-}
-
-.touch-small {
-  width: clamp(40px, 9vw, 56px);
-  height: clamp(40px, 9vw, 56px);
+/* Posición en el diamante + identidad de color por acción */
+.act-crouch { grid-area: top;    border-color: rgba(58, 227, 255, 0.6); }
+.act-run    { grid-area: left;   border-color: rgba(255, 215, 0, 0.55); }
+.act-jump   { grid-area: right;  border-color: rgba(135, 245, 66, 0.6); }
+.act-shoot  {
+  grid-area: bottom;
+  border-color: rgba(255, 107, 53, 0.7);
+  width: clamp(42px, 9vw, 58px);
+  height: clamp(42px, 9vw, 58px);
   font-size: clamp(18px, 4.5vw, 26px);
 }
 
+.act-crouch.pressed { background: rgba(58, 227, 255, 0.4); }
+.act-run.pressed    { background: rgba(255, 215, 0, 0.4); }
+.act-jump.pressed   { background: rgba(135, 245, 66, 0.4); }
+.act-shoot.pressed  { background: rgba(255, 107, 53, 0.4); }
+
 /* Toggle de sprint activo */
-.touch-run.active {
+.act-run.active {
   background: rgba(255, 215, 0, 0.4);
   border-color: var(--color-gold);
-  box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.4);
 }
 
-/* Botón de pausa flotante */
+/* Botón de pausa flotante: centrado abajo, entre los clusters,
+   para no solaparse con el SCORE del HUD (esquina superior derecha). */
 body.touch-device #touch-pause:not(.hidden) {
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 10px;
-  right: 10px;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 61;
-  width: clamp(38px, 9vw, 48px);
-  height: clamp(38px, 9vw, 48px);
-  border-radius: 10px;
-  background: rgba(20, 18, 32, 0.6);
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  width: clamp(30px, 7vw, 38px);
+  height: clamp(30px, 7vw, 38px);
+  border-radius: 8px;
+  background: rgba(20, 18, 32, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   color: #f3f4f6;
-  font-size: clamp(16px, 4vw, 22px);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  font-size: clamp(13px, 3.2vw, 18px);
+  opacity: 0.55;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   pointer-events: auto;
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
