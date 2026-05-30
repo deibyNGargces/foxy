@@ -19,6 +19,8 @@ class GameEngine {
     
     // Controles
     this.keys = {};
+    // Estado de disparo continuo desde el botón táctil (auto-fire mientras se mantiene)
+    this.touchShooting = false;
     
     // Estado del juego: 'START_SCREEN', 'PLAYING', 'UPGRADE_SHOP', 'GAME_OVER', 'PAUSED'
     this.state = 'START_SCREEN';
@@ -69,6 +71,7 @@ class GameEngine {
     this.player = new Player(150, 200);
 
     this.setupInput();
+    this.setupTouchControls();
     this.setupDOM();
     this.loadState('START_SCREEN');
 
@@ -110,6 +113,103 @@ class GameEngine {
         document.activeElement.blur();
       }
     });
+  }
+
+  // Controles táctiles para móviles (mapean los botones en pantalla al objeto this.keys)
+  setupTouchControls() {
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (isTouch) {
+      document.body.classList.add('touch-device');
+    }
+
+    // Botón de mantener: pone keys[code]=true mientras se toca, false al soltar.
+    // opts.trigger activa además el flag *_Trigger de un solo uso (salto).
+    const bindHold = (id, code, opts = {}) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const press = (e) => {
+        e.preventDefault();
+        this.keys[code] = true;
+        if (opts.trigger) this.keys[code + '_Trigger'] = true;
+        el.classList.add('pressed');
+      };
+      const release = (e) => {
+        if (e) e.preventDefault();
+        this.keys[code] = false;
+        el.classList.remove('pressed');
+      };
+
+      el.addEventListener('touchstart', press, { passive: false });
+      el.addEventListener('touchend', release, { passive: false });
+      el.addEventListener('touchcancel', release, { passive: false });
+      // Fallback con ratón para probar en escritorio
+      el.addEventListener('mousedown', press);
+      el.addEventListener('mouseup', release);
+      el.addEventListener('mouseleave', () => { if (this.keys[code]) release(); });
+    };
+
+    bindHold('touch-left', 'KeyA');
+    bindHold('touch-right', 'KeyD');
+    bindHold('touch-jump', 'KeyW', { trigger: true });
+    bindHold('touch-crouch', 'KeyS');
+
+    // Disparo: auto-fire mientras se mantiene (el cooldown del player regula la cadencia)
+    const shootBtn = document.getElementById('touch-shoot');
+    if (shootBtn) {
+      const startShoot = (e) => {
+        e.preventDefault();
+        this.touchShooting = true;
+        this.keys['Mouse_Trigger'] = true;
+        shootBtn.classList.add('pressed');
+      };
+      const stopShoot = (e) => {
+        if (e) e.preventDefault();
+        this.touchShooting = false;
+        shootBtn.classList.remove('pressed');
+      };
+      shootBtn.addEventListener('touchstart', startShoot, { passive: false });
+      shootBtn.addEventListener('touchend', stopShoot, { passive: false });
+      shootBtn.addEventListener('touchcancel', stopShoot, { passive: false });
+      shootBtn.addEventListener('mousedown', startShoot);
+      shootBtn.addEventListener('mouseup', stopShoot);
+      shootBtn.addEventListener('mouseleave', () => { if (this.touchShooting) stopShoot(); });
+    }
+
+    // Sprint: botón de palanca (toggle) en lugar de mantener
+    const runBtn = document.getElementById('touch-run');
+    if (runBtn) {
+      const toggleRun = (e) => {
+        e.preventDefault();
+        const active = !this.keys['ShiftLeft'];
+        this.keys['ShiftLeft'] = active;
+        runBtn.classList.toggle('active', active);
+      };
+      runBtn.addEventListener('touchstart', toggleRun, { passive: false });
+      runBtn.addEventListener('mousedown', toggleRun);
+    }
+
+    // Pausa flotante
+    const pauseBtn = document.getElementById('touch-pause');
+    if (pauseBtn) {
+      const doPause = (e) => {
+        e.preventDefault();
+        this.togglePause();
+      };
+      pauseBtn.addEventListener('touchstart', doPause, { passive: false });
+      pauseBtn.addEventListener('mousedown', doPause);
+    }
+
+    // Tocar el overlay de pausa reanuda (en móvil no hay tecla ESC)
+    const pauseOverlay = document.getElementById('pause-overlay');
+    if (pauseOverlay) {
+      pauseOverlay.addEventListener('touchstart', (e) => {
+        if (this.state === 'PAUSED') {
+          e.preventDefault();
+          this.togglePause();
+        }
+      }, { passive: false });
+    }
   }
 
   setupDOM() {
@@ -207,6 +307,17 @@ class GameEngine {
     this.dom.gameOverScreen.classList.add('hidden');
     this.dom.pauseOverlay.classList.add('hidden');
     this.dom.hud.classList.add('hidden');
+
+    // Controles táctiles: solo visibles durante PLAYING
+    const touchControls = document.getElementById('touch-controls');
+    const touchPause = document.getElementById('touch-pause');
+    if (newState === 'PLAYING') {
+      if (touchControls) touchControls.classList.remove('hidden');
+      if (touchPause) touchPause.classList.remove('hidden');
+    } else {
+      if (touchControls) touchControls.classList.add('hidden');
+      if (touchPause) touchPause.classList.add('hidden');
+    }
 
     // Desactivar cartel de alerta de Boss
     const alertEl = document.getElementById('boss-warning-overlay');
@@ -383,13 +494,22 @@ class GameEngine {
   }
 
   togglePause() {
+    const touchControls = document.getElementById('touch-controls');
     if (this.state === 'PLAYING') {
       this.state = 'PAUSED';
       this.dom.pauseOverlay.classList.remove('hidden');
+      // Soltar cualquier control mantenido para que Foxy no siga en movimiento
+      this.touchShooting = false;
+      this.keys = {};
+      const runBtn = document.getElementById('touch-run');
+      if (runBtn) runBtn.classList.remove('active');
+      document.querySelectorAll('.touch-btn.pressed').forEach(b => b.classList.remove('pressed'));
+      if (touchControls) touchControls.classList.add('hidden');
       SOUND.stopMusic();
     } else if (this.state === 'PAUSED') {
       this.state = 'PLAYING';
       this.dom.pauseOverlay.classList.add('hidden');
+      if (touchControls) touchControls.classList.remove('hidden');
       SOUND.startMusic();
     }
   }
@@ -486,6 +606,11 @@ class GameEngine {
   update() {
     // 0. Esparcir partículas ambientales específicas del mundo activo
     PARTICLES.spawnAmbientParticles(this.theme, this.cameraX);
+
+    // Auto-fire táctil: re-arma el disparo cada frame mientras se mantiene el botón
+    if (this.touchShooting) {
+      this.keys['Mouse_Trigger'] = true;
+    }
 
     // 1. Spawning de Zombies normales
     this.spawnTimer++;

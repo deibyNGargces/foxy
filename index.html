@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Foxy vs Zombies - Retro Ninja Platformer</title>
   <meta name="description" content="Juego web retro pixel-art 8-bit de plataformas y supervivencia. Controla al Zorro Ninja místico usando WASD y elimina oleadas de zombies.">
   
@@ -218,8 +218,37 @@
           </div>
         </div>
 
+        <!-- ================= CONTROLES TÁCTILES (MÓVIL) ================= -->
+        <div id="touch-controls" class="hidden">
+          <!-- Cluster izquierdo: Movimiento direccional -->
+          <div class="touch-cluster touch-left-cluster">
+            <button id="touch-left" class="touch-btn touch-dir" aria-label="Mover a la izquierda">◀</button>
+            <button id="touch-right" class="touch-btn touch-dir" aria-label="Mover a la derecha">▶</button>
+          </div>
+
+          <!-- Cluster derecho: Acciones -->
+          <div class="touch-cluster touch-right-cluster">
+            <button id="touch-run" class="touch-btn touch-small touch-run" aria-label="Correr (sprint)">»</button>
+            <button id="touch-crouch" class="touch-btn touch-crouch" aria-label="Agacharse / Deslizar">▼</button>
+            <button id="touch-shoot" class="touch-btn touch-shoot" aria-label="Lanzar hechizo">🔥</button>
+            <button id="touch-jump" class="touch-btn touch-jump" aria-label="Saltar / Doble salto">▲</button>
+          </div>
+        </div>
+
+        <!-- Botón de pausa flotante (móvil) -->
+        <button id="touch-pause" class="hidden" aria-label="Pausar">⏸</button>
+
       </div>
-      
+
+    </div>
+  </div>
+
+  <!-- ================= AVISO DE ROTACIÓN (MÓVIL EN VERTICAL) ================= -->
+  <div id="rotate-device-overlay">
+    <div class="rotate-content">
+      <div class="rotate-icon">📱</div>
+      <h2 class="neon-blue">GIRA TU DISPOSITIVO</h2>
+      <p>Foxy vs Zombies se juega en horizontal (landscape).<br>Voltea tu móvil para entrar en combate. 🦊</p>
     </div>
   </div>
   
